@@ -1,0 +1,14 @@
+{
+  "name": "wordle-bot",
+  "version": "1.0.0",
+  "description": "A telegram bot that provides the starting word for your wordle challenge",
+  "scripts": {
+    "start": "node src/index.js"
+  },
+  "author": "abhi.rawat456@gmail.com",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.0.3",
+    "telegraf": "^4.11.2"
+  }
+}
