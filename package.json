@@ -6,7 +6,7 @@
     "start": "node src/index.js"
   },
   "author": "abhi.rawat456@gmail.com",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "dotenv": "^16.0.3",
     "telegraf": "^4.11.2"
