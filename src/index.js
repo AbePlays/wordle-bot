@@ -2,11 +2,12 @@ const { Telegraf } = require('telegraf')
 require('dotenv').config()
 
 const { words } = require('./data/five-letter-words')
+const { goodLuckMessages } = require('./data/good-luck-messages')
 const {
+  getRandomStringFromCollection,
   isToday,
   jsonReader,
   jsonWriter,
-  getRandomNumberInRange,
 } = require('./utils')
 
 const bot = new Telegraf(process.env.BOT_TOKEN)
@@ -32,17 +33,15 @@ bot.command('word', (ctx) => {
         await ctx.sendMessage(
           `The starting word for today, ${data.word.toUpperCase()}, has already been created by @${userName}.`
         )
-        await ctx.sendMessage(
-          `Wishing you the best of luck in finding all the hidden words in Wordle! 🔍🍀`
-        )
+        await ctx.sendMessage(data.message)
       } else {
-        // 3. Find a random word
-        const numberOfWords = words.length
-        const randomIndex = getRandomNumberInRange(0, numberOfWords - 1)
-        const word = words[randomIndex]
+        // 3. Find a random word and message
+        const word = getRandomStringFromCollection(words)
+        const message = getRandomStringFromCollection(goodLuckMessages)
         const newDbEntry = JSON.stringify({
           created_at: new Date().toISOString(),
           created_by: userName,
+          message,
           word,
         })
         // 4. Save it in db
@@ -50,6 +49,7 @@ bot.command('word', (ctx) => {
           if (error) throw error
           await ctx.sendMessage('Here is your word ⬇️')
           await ctx.sendMessage(word)
+          await ctx.sendMessage(message)
         })
       }
     })
