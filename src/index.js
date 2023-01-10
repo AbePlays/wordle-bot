@@ -23,7 +23,7 @@ bot.start((ctx) => {
 // /word
 bot.command('word', (ctx) => {
   try {
-    const userName = ctx.update.message.from.username
+    const senderName = ctx.update.message.from.username
     // 1. Read current saved data from db
     jsonReader(DB_URL, async (error, data) => {
       if (error) throw error
@@ -31,7 +31,9 @@ bot.command('word', (ctx) => {
       // 2. Only one word every day
       if (isToday(savedDate)) {
         await ctx.sendMessage(
-          `The starting word for today, ${data.word.toUpperCase()}, has already been created by @${userName}.`
+          `The starting word for today, ${data.word.toUpperCase()}, has already been created by @${
+            data['created_by']
+          }.`
         )
         await ctx.sendMessage(data.message)
       } else {
@@ -40,17 +42,17 @@ bot.command('word', (ctx) => {
         const message = getRandomStringFromCollection(goodLuckMessages)
         const newDbEntry = JSON.stringify({
           created_at: new Date().toISOString(),
-          created_by: userName,
+          created_by: senderName,
           message,
           word,
         })
         // 4. Save it in db
-        jsonWriter(DB_URL, newDbEntry, async (error) => {
+        jsonWriter(DB_URL, newDbEntry, (error) => {
           if (error) throw error
-          await ctx.sendMessage('Here is your word ⬇️')
-          await ctx.sendMessage(word)
-          await ctx.sendMessage(message)
         })
+        await ctx.sendMessage('Here is your word ⬇️')
+        await ctx.sendMessage(word.toUpperCase())
+        await ctx.sendMessage(message)
       }
     })
   } catch (error) {
